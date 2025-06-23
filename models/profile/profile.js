@@ -1,27 +1,18 @@
 const mongoose = require('mongoose');
-const Location = require('./location'); // Import the Location model
 
-const profileSchema = new mongoose.Schema({
-    email: {
-        type: String,
-        unique: true,
-        sparse: true,
-    },
-    name: {
-        type: String,
-        required: true,
-    },
-    image: {
-        type: String,
-    },
-    locations: [
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Location', // Reference to the Location model
-        },
-    ],
-}, {
-    timestamps: true,
+const profileSetupSchema = new mongoose.Schema({
+  name: { type: String, required: true },
+  email: { type: String},
+  gender: {
+    type: String,
+    enum: ['Male', 'Female'],
+    required: true,
+  },
+  bank_details: {
+    bank_account_number: { type: String, required: true },
+    bank_name: { type: String, required: true },
+    name_of_account_holder: { type: String, required: true },
+  },
 });
 
-module.exports = mongoose.model('Profile', profileSchema);
+module.exports = mongoose.model('ProfileSetup', profileSetupSchema);

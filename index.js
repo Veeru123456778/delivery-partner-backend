@@ -32,7 +32,6 @@ const vendor = require("./routes/delivery-partner");
 app.use("/api/v1/auth", vendor);
 
 //activate
-
 app.listen(PORT, () => {
   console.log(`App is listening at ${PORT}`);
 });

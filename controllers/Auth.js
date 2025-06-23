@@ -34,7 +34,7 @@ exports.signupOrLogin = async (req, res) => {
 
     // Generate OTP
     const otp = generateOTP();
-
+     console.log("Generated OTP:", otp);
     // Save OTP to the database
     await MobileOTP.create({ mobileNumber, otp });
 
@@ -60,6 +60,80 @@ exports.signupOrLogin = async (req, res) => {
       .json({ success: false, message: "Failed to process request" });
   }
 };
+
+// Verify OTP for Signup/Login
+// exports.verifyOTP = async (req, res) => {
+//   const { mobileNumber, otp } = req.body;
+
+//   if (!mobileNumber || !otp) {
+//     return res
+//       .status(400)
+//       .json({ success: false, message: "Mobile number and OTP are required" });
+//   }
+
+//   try {
+//     // Find the most recent OTP for this mobile number
+//     const recentOtp = await MobileOTP.find({ mobileNumber })
+//       .sort({ createdAt: -1 })
+//       .limit(1);
+
+//     if (!recentOtp.length || otp !== recentOtp[0].otp) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Invalid OTP",
+//       });
+//     }
+
+//     // OTP is valid, delete all OTPs for this number
+//     await MobileOTP.deleteMany({ mobileNumber });
+
+//     // Check if the delivery_partner exists
+//     let delivery_partner = await DeliveryPartner.findOne({ mobileNumber });
+
+//     if (!delivery_partner) {
+//       // Signup process: Create a new delivery_partner and profile
+//       const profile = await Profile.create({
+//         email: null,
+//         name: "Anonymous",
+//         gender:null,
+//         image: null,
+//       });
+
+//       delivery_partner = await DeliveryPartner.create({
+//         mobileNumber,
+//         isVerified: true,
+//         profile: profile._id,
+//       });
+//     } else {
+//       // Login process: Update verification status
+//       delivery_partner.isVerified = true;
+//       await delivery_partner.save();
+//     }
+
+//     // Generate token
+//     const token = generateToken(delivery_partner);
+
+//     // Set token in cookies
+//     res.cookie("token", token, {
+//       httpOnly: true,
+//       secure: process.env.NODE_ENV === "production",
+//       maxAge: 5 * 60 * 60 * 1000, // 5 hours
+//     });
+
+//     return res.status(200).json({
+//       success: true,
+//       message: delivery_partner.isNew ? "Signup successful" : "Login successful",
+//       token,
+//       delivery_partner,
+//     });
+//   } catch (error) {
+//     console.error("Error verifying OTP:", error);
+//     return res
+//       .status(500)
+//       .json({ success: false, message: "Failed to verify OTP" });
+//   }
+// };
+
 
 // Verify OTP for Signup/Login
 exports.verifyOTP = async (req, res) => {
@@ -91,17 +165,11 @@ exports.verifyOTP = async (req, res) => {
     let delivery_partner = await DeliveryPartner.findOne({ mobileNumber });
 
     if (!delivery_partner) {
-      // Signup process: Create a new delivery_partner and profile
-      const profile = await Profile.create({
-        email: null,
-        name: "Anonymous",
-        image: null,
-      });
-
+      // Signup process: Create a new delivery_partner WITHOUT profile
       delivery_partner = await DeliveryPartner.create({
         mobileNumber,
         isVerified: true,
-        profile: profile._id,
+        // All other fields (profile, bank_details, etc.) remain undefined/null
       });
     } else {
       // Login process: Update verification status
@@ -132,6 +200,7 @@ exports.verifyOTP = async (req, res) => {
       .json({ success: false, message: "Failed to verify OTP" });
   }
 };
+
 
 exports.get_delivery_partner_details = async (req, res) => {
   try {
