@@ -7,7 +7,7 @@ const workSetupSchema = new mongoose.Schema({
   vehicle_details: {
     vehicle_type: {
       type: String,
-      enum: ['Petrol motorcycle', 'Electric Bike', 'None'],
+      enum: ['Bike', 'Car', 'Scooty'],
       required: true,
     },
     vehicle_color: { type: String, required: true },
@@ -18,7 +18,6 @@ const workSetupSchema = new mongoose.Schema({
   },
   preferred_work_timings: {
     type: String,
-    enum: ['Morning', 'Evening', 'Part Time'],
     required: true,
   },
 });
