@@ -20,11 +20,7 @@ exports.saveProfileSetup = async (req, res) => {
 
     const profile = await ProfileSetup.create(profileData);
 
-    // const deliveryPartner = await DeliveryPartner.findById(userId);
-    // deliveryPartner.profile = profile._id;
-    // await deliveryPartner.save();
 
-    // res.status(200).json({ success: true, message: "Profile saved", profile });
 
     const deliveryPartner = await DeliveryPartner.findByIdAndUpdate(
         userId,
@@ -39,5 +35,33 @@ exports.saveProfileSetup = async (req, res) => {
       });
   } catch (err) {
     res.status(500).json({ success: false, message: "Failed to save profile", error: err.message });
+  }
+};
+
+
+exports.getProfileSetup = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const deliveryPartner = await DeliveryPartner.findById(userId).populate('profile_setup');
+
+    if (!deliveryPartner || !deliveryPartner.profile_setup) {
+      return res.status(404).json({
+        success: false,
+        message: "Profile setup not found for this delivery partner",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Profile setup fetched successfully",
+      profile: deliveryPartner.profile_setup,
+    });
+  } catch (error) {
+    console.error("Error fetching profile setup:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch profile setup",
+    });
   }
 };

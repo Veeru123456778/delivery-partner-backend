@@ -53,3 +53,32 @@ exports.saveWorkSetup = async (req, res) => {
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 };
+
+
+
+exports.getWorkSetup = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const deliveryPartner = await DeliveryPartner.findById(userId).populate('work_setup');
+
+    if (!deliveryPartner || !deliveryPartner.work_setup) {
+      return res.status(404).json({
+        success: false,
+        message: "Work setup not found for this delivery partner",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Work setup fetched successfully",
+      workSetup: deliveryPartner.work_setup,
+    });
+  } catch (error) {
+    console.error("Error fetching work setup:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch work setup",
+    });
+  }
+};

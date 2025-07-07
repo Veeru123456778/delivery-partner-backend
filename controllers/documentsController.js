@@ -36,3 +36,32 @@ exports.saveDocuments = async (req, res) => {
     res.status(500).json({ success: false, message: "Failed to save documents", error: err.message });
   }
 };
+
+
+
+exports.getDocuments = async (req, res) => {
+  const userId = req.user.id;
+
+  try {
+    const deliveryPartner = await DeliveryPartner.findById(userId).populate("documents");
+
+    if (!deliveryPartner || !deliveryPartner.documents) {
+      return res.status(404).json({
+        success: false,
+        message: "Documents not found for this delivery partner",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "Documents fetched successfully",
+      documents: deliveryPartner.documents,
+    });
+  } catch (error) {
+    console.error("Error fetching documents:", error);
+    return res.status(500).json({
+      success: false,
+      message: "Failed to fetch documents",
+    });
+  }
+};
