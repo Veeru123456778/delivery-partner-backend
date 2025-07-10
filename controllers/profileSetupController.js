@@ -5,7 +5,7 @@ exports.saveProfileSetup = async (req, res) => {
   const userId = req.user.id;
 
   try {
-    const { name, email, gender, bank_account_number, bank_name, name_of_account_holder } = req.body;
+    const { name, email, gender, bank_account_number, bank_name, name_of_account_holder,ifsc_code } = req.body;
 
     const profileData = {
       name,
@@ -15,12 +15,11 @@ exports.saveProfileSetup = async (req, res) => {
         bank_account_number,
         bank_name,
         name_of_account_holder,
+        ifsc_code,
       },
     };
 
     const profile = await ProfileSetup.create(profileData);
-
-
 
     const deliveryPartner = await DeliveryPartner.findByIdAndUpdate(
         userId,

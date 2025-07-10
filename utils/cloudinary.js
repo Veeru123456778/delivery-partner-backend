@@ -19,7 +19,12 @@ const uploadToCloudinary = async (localPath, folder) => {
   }
 };
 
+const deleteFromCloudinary = async (publicId) => {
+  await cloudinary.uploader.destroy(publicId);
+};
+
 module.exports = {
   cloudinary,
   uploadToCloudinary,
+  deleteFromCloudinary,
 };

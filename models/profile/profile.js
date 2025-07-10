@@ -12,6 +12,7 @@ const profileSetupSchema = new mongoose.Schema({
     bank_account_number: { type: String, required: true },
     bank_name: { type: String, required: true },
     name_of_account_holder: { type: String, required: true },
+    ifsc_code: { type: String, required: true },
   },
 });
 

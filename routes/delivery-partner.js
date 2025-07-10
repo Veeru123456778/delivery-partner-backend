@@ -10,7 +10,8 @@ const { auth, isDeliveryPartner } = require("../middleware/auth"); // Import isA
 const { saveWorkSetup,getWorkSetup } = require("../controllers/workSetupController");
 const { upload } = require('../middleware/multer');
 const { saveProfileSetup,getProfileSetup } = require("../controllers/profileSetupController");
-const { saveDocuments,getDocuments } = require("../controllers/documentsController");
+const { saveDocuments,getDocuments,updateProfilePicture } = require("../controllers/documentsController");
+const { getDeliveryPartnerInfo } = require("../controllers/deliveryPartner");
 
 // Unified route for signup and login
 router.post("/send-otp", signupOrLogin);
@@ -32,7 +33,6 @@ router.post(
 
 router.post("/profile-setup", auth, isDeliveryPartner, saveProfileSetup);
 
-
 router.post(
   "/documents-upload",
   auth,
@@ -41,6 +41,7 @@ router.post(
   saveDocuments
 );
 
+router.get("/get-delivery-partner-info", auth, isDeliveryPartner, getDeliveryPartnerInfo);
 
 router.get('/get-work-setup', auth, isDeliveryPartner, getWorkSetup);
 
@@ -48,6 +49,13 @@ router.get("/get-profile-setup", auth, isDeliveryPartner, getProfileSetup);
 
 router.get("/get-documents", auth, isDeliveryPartner, getDocuments);
 
+router.put(
+  "/update-profile-picture",
+  auth,
+  isDeliveryPartner,
+  upload.single("userImage"),
+  updateProfilePicture
+);
 
 // Protected route to get Delivery Partner details - now also requires vendor role
 // router.get("/delivery-partner", auth, isDeliveryPartner, get_delivery_partner_details);
